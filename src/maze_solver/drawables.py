@@ -28,3 +28,34 @@ class Window:
 
     def close(self) -> None:
         self.__running = False
+
+    def draw_line(self, line: Line, fill_color: str) -> None:
+        line.draw(self.__canvas, fill_color)
+
+
+class Point:
+    x: int
+    y: int
+
+    def __init__(self, x: int, y: int) -> None:
+        self.x = x
+        self.y = y
+
+
+class Line:
+    __start_point: Point
+    __end_point: Point
+
+    def __init__(self, start_point: Point, end_point: Point) -> None:
+        self.__start_point = start_point
+        self.__end_point = end_point
+
+    def draw(self, canvas: Canvas, fill_color: str) -> None:
+        canvas.create_line(
+            self.__start_point.x,
+            self.__start_point.y,
+            self.__end_point.x,
+            self.__end_point.y,
+            fill=fill_color,
+            width=2,
+        )
