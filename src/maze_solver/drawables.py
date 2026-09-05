@@ -70,9 +70,9 @@ class Cell:
     __rigth_x: int
     __top_y: int
     __bottom_y: int
-    __win: Window
+    __win: Window | None
 
-    def __init__(self, window: Window) -> None:
+    def __init__(self, window: Window | None = None) -> None:
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
@@ -92,14 +92,15 @@ class Cell:
         top_right = Point(self.__rigth_x, self.__top_y)
         bottom_left = Point(self.__left_x, self.__bottom_y)
 
-        if self.has_left_wall:
-            self.__win.draw_line(Line(top_left, bottom_left), "black")
-        if self.has_right_wall:
-            self.__win.draw_line(Line(top_right, bottom_right), "black")
-        if self.has_top_wall:
-            self.__win.draw_line(Line(top_left, top_right), "black")
-        if self.has_bottom_wall:
-            self.__win.draw_line(Line(bottom_left, bottom_right), "black")
+        if self.__win != None:
+            if self.has_left_wall:
+                self.__win.draw_line(Line(top_left, bottom_left), "black")
+            if self.has_right_wall:
+                self.__win.draw_line(Line(top_right, bottom_right), "black")
+            if self.has_top_wall:
+                self.__win.draw_line(Line(top_left, top_right), "black")
+            if self.has_bottom_wall:
+                self.__win.draw_line(Line(bottom_left, bottom_right), "black")
 
     def draw_move(self, target_cell: Cell, undo: bool = False) -> None:
         center = Point(
@@ -111,5 +112,6 @@ class Cell:
             (target_cell.__top_y + target_cell.__bottom_y) // 2,
         )
 
-        fill_color = "grey" if undo else "red"
-        self.__win.draw_line(Line(center, target_center), fill_color)
+        if self.__win != None:
+            fill_color = "grey" if undo else "red"
+            self.__win.draw_line(Line(center, target_center), fill_color)
