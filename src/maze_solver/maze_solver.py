@@ -12,7 +12,7 @@ def main() -> None:
 
     window = Window("Maze Solver!", 800, 600)
 
-    maze: Maze = Maze(START_X, START_Y, 11, 15, CELL_SIZE, CELL_SIZE, window)
+    Maze(START_X, START_Y, 11, 15, CELL_SIZE, CELL_SIZE, window)
 
     window.wait_for_close()
 
