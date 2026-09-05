@@ -59,3 +59,44 @@ class Line:
             fill=fill_color,
             width=2,
         )
+
+
+class Cell:
+    has_left_wall: bool
+    has_right_wall: bool
+    has_top_wall: bool
+    has_bottom_wall: bool
+    __left_x: int
+    __rigth_x: int
+    __top_y: int
+    __bottom_y: int
+    __win: Window
+
+    def __init__(self, window: Window) -> None:
+        self.has_left_wall = True
+        self.has_right_wall = True
+        self.has_top_wall = True
+        self.has_bottom_wall = True
+        self.__left_x = -1
+        self.__rigth_x = -1
+        self.__top_y = -1
+        self.__bottom_y = -1
+        self.__win = window
+
+    def draw(self, top_left: Point, bottom_right: Point) -> None:
+        self.__left_x = top_left.x
+        self.__rigth_x = bottom_right.x
+        self.__top_y = top_left.y
+        self.__bottom_y = bottom_right.y
+
+        top_right = Point(self.__rigth_x, self.__top_y)
+        bottom_left = Point(self.__left_x, self.__bottom_y)
+
+        if self.has_left_wall:
+            self.__win.draw_line(Line(top_left, bottom_left), "black")
+        if self.has_right_wall:
+            self.__win.draw_line(Line(top_right, bottom_right), "black")
+        if self.has_top_wall:
+            self.__win.draw_line(Line(top_left, top_right), "black")
+        if self.has_bottom_wall:
+            self.__win.draw_line(Line(bottom_left, bottom_right), "black")
