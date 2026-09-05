@@ -1,10 +1,13 @@
 from tkinter import BOTH, Canvas, Tk
 
+from maze_solver.utils import Direction
+
 
 class Window:
     __root: Tk
     __canvas: Canvas
     __running: bool
+    background_color: str
 
     def __init__(self, title: str, width: int, height: int) -> None:
         self.__root: Tk = Tk()
@@ -13,6 +16,8 @@ class Window:
 
         self.__canvas = Canvas(self.__root, width=width, height=height)
         self.__canvas.pack(fill=BOTH, expand=True)
+
+        self.background_color = self.__canvas.cget("bg")
 
         self.__running = False
 
@@ -70,9 +75,10 @@ class Cell:
     __rigth_x: int
     __top_y: int
     __bottom_y: int
-    __win: Window
+    __window: Window | None
+    visited: bool
 
-    def __init__(self, window: Window) -> None:
+    def __init__(self, window: Window | None = None) -> None:
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
@@ -81,7 +87,8 @@ class Cell:
         self.__rigth_x = -1
         self.__top_y = -1
         self.__bottom_y = -1
-        self.__win = window
+        self.__window = window
+        self.visited = False
 
     def draw(self, top_left: Point, bottom_right: Point) -> None:
         self.__left_x = top_left.x
@@ -92,14 +99,32 @@ class Cell:
         top_right = Point(self.__rigth_x, self.__top_y)
         bottom_left = Point(self.__left_x, self.__bottom_y)
 
-        if self.has_left_wall:
-            self.__win.draw_line(Line(top_left, bottom_left), "black")
-        if self.has_right_wall:
-            self.__win.draw_line(Line(top_right, bottom_right), "black")
-        if self.has_top_wall:
-            self.__win.draw_line(Line(top_left, top_right), "black")
-        if self.has_bottom_wall:
-            self.__win.draw_line(Line(bottom_left, bottom_right), "black")
+        if self.__window != None:
+            color = (
+                "black"
+                if self.has_left_wall
+                else self.__window.background_color
+            )
+            self.__window.draw_line(Line(top_left, bottom_left), color)
+
+            color = (
+                "black"
+                if self.has_right_wall
+                else self.__window.background_color
+            )
+            self.__window.draw_line(Line(top_right, bottom_right), color)
+
+            color = (
+                "black" if self.has_top_wall else self.__window.background_color
+            )
+            self.__window.draw_line(Line(top_left, top_right), color)
+
+            color = (
+                "black"
+                if self.has_bottom_wall
+                else self.__window.background_color
+            )
+            self.__window.draw_line(Line(bottom_left, bottom_right), color)
 
     def draw_move(self, target_cell: Cell, undo: bool = False) -> None:
         center = Point(
@@ -111,5 +136,17 @@ class Cell:
             (target_cell.__top_y + target_cell.__bottom_y) // 2,
         )
 
-        fill_color = "grey" if undo else "red"
-        self.__win.draw_line(Line(center, target_center), fill_color)
+        if self.__window != None:
+            fill_color = "grey" if undo else "red"
+            self.__window.draw_line(Line(center, target_center), fill_color)
+
+    def has_wall(self, direction: Direction) -> bool:
+        match direction:
+            case Direction.LEFT:
+                return self.has_left_wall
+            case Direction.RIGHT:
+                return self.has_right_wall
+            case Direction.TOP:
+                return self.has_top_wall
+            case Direction.BOTTOM:
+                return self.has_bottom_wall

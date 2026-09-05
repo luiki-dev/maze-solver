@@ -1,8 +1,10 @@
-import random
+from maze_solver.maze import Maze
 
-from .drawables import Cell, Point, Window
+from .drawables import Window
 
 CELL_SIZE = 50
+START_X = 25
+START_Y = 25
 
 
 def main() -> None:
@@ -10,27 +12,11 @@ def main() -> None:
 
     window = Window("Maze Solver!", 800, 600)
 
-    previous_cell = None
+    maze: Maze = Maze(START_X, START_Y, 11, 15, CELL_SIZE, CELL_SIZE, window)
 
-    for _ in range(4):
-        left_x = random.randint(0, 800 - CELL_SIZE)
-        top_y = random.randint(0, 600 - CELL_SIZE)
+    solved = maze.solve()
 
-        cell = Cell(window)
-        cell.has_left_wall = random.choice([True, False])
-        cell.has_right_wall = random.choice([True, False])
-        cell.has_top_wall = random.choice([True, False])
-        cell.has_bottom_wall = random.choice([True, False])
-
-        cell.draw(
-            Point(left_x, top_y),
-            Point(left_x + CELL_SIZE, top_y + CELL_SIZE),
-        )
-
-        if previous_cell is not None:
-            previous_cell.draw_move(cell, undo=random.choice([True, False]))
-
-        previous_cell = cell
+    print(f"Maze {'' if solved else 'NOT '}solved!")
 
     window.wait_for_close()
 
