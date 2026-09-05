@@ -100,3 +100,16 @@ class Cell:
             self.__win.draw_line(Line(top_left, top_right), "black")
         if self.has_bottom_wall:
             self.__win.draw_line(Line(bottom_left, bottom_right), "black")
+
+    def draw_move(self, target_cell: Cell, undo: bool = False) -> None:
+        center = Point(
+            (self.__left_x + self.__rigth_x) // 2,
+            (self.__top_y + self.__bottom_y) // 2,
+        )
+        target_center = Point(
+            (target_cell.__left_x + target_cell.__rigth_x) // 2,
+            (target_cell.__top_y + target_cell.__bottom_y) // 2,
+        )
+
+        fill_color = "grey" if undo else "red"
+        self.__win.draw_line(Line(center, target_center), fill_color)

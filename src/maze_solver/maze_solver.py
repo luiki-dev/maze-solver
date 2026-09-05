@@ -10,6 +10,8 @@ def main() -> None:
 
     window = Window("Maze Solver!", 800, 600)
 
+    previous_cell = None
+
     for _ in range(4):
         left_x = random.randint(0, 800 - CELL_SIZE)
         top_y = random.randint(0, 600 - CELL_SIZE)
@@ -24,6 +26,11 @@ def main() -> None:
             Point(left_x, top_y),
             Point(left_x + CELL_SIZE, top_y + CELL_SIZE),
         )
+
+        if previous_cell is not None:
+            previous_cell.draw_move(cell, undo=random.choice([True, False]))
+
+        previous_cell = cell
 
     window.wait_for_close()
 
