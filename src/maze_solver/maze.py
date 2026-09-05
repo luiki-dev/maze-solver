@@ -1,8 +1,8 @@
 import random
 import time
-from enum import Enum, auto
 
 from maze_solver.drawables import Cell, Point, Window
+from maze_solver.utils import Direction
 
 
 class Maze:
@@ -42,6 +42,7 @@ class Maze:
         self.__create_cells()
         self.__break_entrance_and_exit()
         self.__break_walls(0, 0)
+        self.__reset_cells_visited()
 
     def __create_cells(self) -> None:
         for c in range(self.__num_cols):
@@ -147,9 +148,55 @@ class Maze:
 
             self.__break_walls(direction[0], direction[1])
 
+    def __reset_cells_visited(self) -> None:
+        for c in self.__cells:
+            for cell in c:
+                cell.visited = False
 
-class Direction(Enum):
-    LEFT = auto()
-    RIGHT = auto()
-    TOP = auto()
-    BOTTOM = auto()
+    def solve(self) -> bool:
+        return self.__solve(0, 0)
+
+    def __solve(self, c: int, r: int) -> bool:
+        self.__animate()
+
+        cell: Cell = self.__cells[c][r]
+        cell.visited = True
+
+        if c == self.__num_cols - 1 and r == self.__num_rows - 1:
+            # end cell reached
+            return True
+
+        if self.__visit_adjecent_cell(cell, Direction.LEFT, c > 0, c - 1, r):
+            return True
+
+        if self.__visit_adjecent_cell(
+            cell, Direction.RIGHT, c < self.__num_cols - 1, c + 1, r
+        ):
+            return True
+
+        if self.__visit_adjecent_cell(cell, Direction.TOP, r > 0, c, r - 1):
+            return True
+
+        return self.__visit_adjecent_cell(
+            cell, Direction.BOTTOM, r < self.__num_rows - 1, c, r + 1
+        )
+
+    def __visit_adjecent_cell(
+        self,
+        cell: Cell,
+        direction: Direction,
+        edge_condition_met: bool,
+        target_c: int,
+        target_r: int,
+    ) -> bool:
+        if not cell.has_wall(direction) and edge_condition_met:
+            target_cell: Cell = self.__cells[target_c][target_r]
+            if not target_cell.visited:
+                cell.draw_move(target_cell)
+
+                if self.__solve(target_c, target_r):
+                    return True
+
+                cell.draw_move(target_cell, undo=True)
+
+        return False

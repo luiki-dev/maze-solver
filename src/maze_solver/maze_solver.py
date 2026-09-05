@@ -12,7 +12,11 @@ def main() -> None:
 
     window = Window("Maze Solver!", 800, 600)
 
-    Maze(START_X, START_Y, 11, 15, CELL_SIZE, CELL_SIZE, window)
+    maze: Maze = Maze(START_X, START_Y, 11, 15, CELL_SIZE, CELL_SIZE, window)
+
+    solved = maze.solve()
+
+    print(f"Maze {'' if solved else 'NOT '}solved!")
 
     window.wait_for_close()
 

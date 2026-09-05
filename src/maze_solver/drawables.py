@@ -1,5 +1,7 @@
 from tkinter import BOTH, Canvas, Tk
 
+from maze_solver.utils import Direction
+
 
 class Window:
     __root: Tk
@@ -137,3 +139,14 @@ class Cell:
         if self.__window != None:
             fill_color = "grey" if undo else "red"
             self.__window.draw_line(Line(center, target_center), fill_color)
+
+    def has_wall(self, direction: Direction) -> bool:
+        match direction:
+            case Direction.LEFT:
+                return self.has_left_wall
+            case Direction.RIGHT:
+                return self.has_right_wall
+            case Direction.TOP:
+                return self.has_top_wall
+            case Direction.BOTTOM:
+                return self.has_bottom_wall
